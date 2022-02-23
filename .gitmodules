@@ -7,3 +7,6 @@
 [submodule "third_party/GLFW"]
 	path = third_party/GLFW
 	url = https://github.com/glfw/glfw
+[submodule "third_party/glm"]
+	path = third_party/glm
+	url = https://github.com/g-truc/glm
