@@ -1,7 +1,7 @@
 require "../lua/init"
 require "../lua/third_party_project"
 
-third_party_project( "glfw", "StaticLib" )
+third_party_project( "GLFW", "StaticLib" )
 	files
 	{
 		"%{prj.name}/include/GLFW/glfw3.h",
@@ -12,7 +12,19 @@ third_party_project( "glfw", "StaticLib" )
 		"%{prj.name}/src/input.c",
 		"%{prj.name}/src/monitor.c",
 		"%{prj.name}/src/vulkan.c",
-		"%{prj.name}/src/window.c"
+		"%{prj.name}/src/window.c",
+		"%{prj.name}/src/platform.h",
+		"%{prj.name}/src/platform.c",
+
+		-- Null
+
+		"%{prj.name}/src/null_platform.h",
+		"%{prj.name}/src/null_joystick.h",
+		"%{prj.name}/src/null_init.c",	
+		"%{prj.name}/src/null_monitor.c",
+		"%{prj.name}/src/null_window.c",
+		"%{prj.name}/src/null_joystick.c"
+	
 	}
 	
 	defines
@@ -22,8 +34,7 @@ third_party_project( "glfw", "StaticLib" )
 	
 	includedirs
 	{
-		"%{prj.name}/include/GLFW/glfw3.h",
-		"%{prj.name}/include/GLFW/glfw3native.h",
+		"%{prj.name}/include/GLFW/"
 	}
 
 	filter "system:linux"
@@ -42,6 +53,7 @@ third_party_project( "glfw", "StaticLib" )
 			"%{prj.name}/src/posix_thread.c",
 			"%{prj.name}/src/glx_context.c",
 			"%{prj.name}/src/egl_context.c",
+			"%{prj.name}/src/posix_module.c",
 			"%{prj.name}/src/osmesa_context.c",
 			"%{prj.name}/src/linux_joystick.c"
 		}
@@ -64,6 +76,7 @@ third_party_project( "glfw", "StaticLib" )
 			"%{prj.name}/src/win32_time.c",
 			"%{prj.name}/src/win32_thread.c",
 			"%{prj.name}/src/win32_window.c",
+			"%{prj.name}/src/win32_module.c",
 			"%{prj.name}/src/wgl_context.c",
 			"%{prj.name}/src/egl_context.c",
 			"%{prj.name}/src/osmesa_context.c"

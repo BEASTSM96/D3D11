@@ -8,7 +8,7 @@ _workspace( "D3D11-Engine", "D3D11-Engine" )
 third_party_include "third_party/glfw"
 third_party_include "third_party/imgui"
 
-_project( "D3D11-Engine" )
+_project( "D3D11-Engine", "ConsoleApp" )
 	files
 	{
 		"%{prj.name}/src/**.h",
@@ -18,10 +18,21 @@ _project( "D3D11-Engine" )
 	includedirs
 	{
 		"D3D11-Engine/src",
-		"third_party"
-		--"%{IncludeDir.GLFW}",
-		--"%{IncludeDir.ImGui}",
+		"third_party",
+		"third_party/glfw/include",
+		"third_party/ImGui/"
 		--"%{IncludeDir.glm}"
+	}
+
+	defines 
+	{
+		"GLFW_INCLUDE_NONE"
+	}
+
+	links 
+	{
+		"d3d11",
+		"glfw"
 	}
 
 	filter "system:windows"
