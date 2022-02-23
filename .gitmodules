@@ -1,9 +1,9 @@
 [submodule "third_party/imgui"]
 	path = third_party/imgui
 	url = https://github.com/ocornut/imgui
-[submodule "third_party/glfw"]
-	path = third_party/glfw
-	url = https://github.com/glfw/glfw
 [submodule "lua"]
 	path = lua
 	url = https://github.com/BEASTSM96/premake-lua-base
+[submodule "third_party/GLFW"]
+	path = third_party/GLFW
+	url = https://github.com/glfw/glfw
