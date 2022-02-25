@@ -44,7 +44,7 @@ void DeviceContext::Terminate()
 	delete this;
 }
 
-void DeviceContext::CleatRenderTargetColor( SwapChain* pSwapChain, float R, float G, float B, float A )
+void DeviceContext::ClearRenderTargetColor( SwapChain* pSwapChain, float R, float G, float B, float A )
 {
 	FLOAT ClearColor[ 4 ] =
 	{
