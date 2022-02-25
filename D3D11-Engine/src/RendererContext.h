@@ -33,6 +33,8 @@
 #include "SwapChain.h"
 #include "DeviceContext.h"
 
+class VertexBuffer;
+
 class RendererContext
 {
 	SINGLETON( RendererContext );
@@ -47,10 +49,15 @@ public:
 
 	SwapChain* CreateSwapChain();
 
+	VertexBuffer* CreateVertexBuffer();
+
 private:
 
 	void Init();
 	void Terminate();
+	
+	void CreateTriangleShader();
+	void GetShaderBufferAndSize( void** ppCode, uint32_t* pSize );
 
 private:
 
@@ -67,8 +74,18 @@ private:
 
 	DeviceContext* m_DeviceContext;
 
+	// TEMP
+	VertexBuffer* m_pVertexBuffer;
+
+	ID3DBlob* m_pVSBlob = nullptr;
+	ID3DBlob* m_pPSBlob = nullptr;
+
+	ID3D11VertexShader* m_VSShader;
+	ID3D11PixelShader* m_PSShader;
+
 private:
 
 	friend class SwapChain;
+	friend class VertexBuffer;
 
 };

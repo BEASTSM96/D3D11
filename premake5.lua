@@ -32,7 +32,8 @@ _project( "D3D11-Engine", "ConsoleApp" )
 	links 
 	{
 		"d3d11",
-		"glfw"
+		"glfw",
+		"d3dcompiler"
 	}
 
 	filter "system:windows"

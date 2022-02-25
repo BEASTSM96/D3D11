@@ -33,6 +33,7 @@
 #include <d3d11.h>
 
 class SwapChain;
+class VertexBuffer;
 
 class DeviceContext
 {
@@ -42,7 +43,13 @@ public:
 
 public:
 
-	bool CleatRenderTargetColor( SwapChain* pSwapChain, float R, float G, float B, float A );
+	void ClearRenderTargetColor( SwapChain* pSwapChain, float R, float G, float B, float A );
+
+	void SetVertexBuffer( VertexBuffer* pVertexBuffer );
+
+	void DrawTriangleList( uint32_t VertexCount, uint32_t StartVertexIndex );
+
+	void SetViewportSize( uint32_t Width, uint32_t Height );
 
 private:
 

@@ -27,8 +27,24 @@
 */
 
 #include "RendererContext.h"
+#include "VertexBuffer.h"
+#include "MainWindow.h"
 
+#include <d3dcompiler.h>
 #include <vector>
+
+struct Vec3
+{
+	//Vec3() : x( 0 ), y( 0 ), z( 0 ) {}
+	//Vec3( float _x, float _y, float _z ) : x( _x ), y( _y ), z( _z ) {}
+
+	float x, y, z;
+};
+
+struct Vertex
+{
+	Vec3 Position;
+};
 
 void RendererContext::Init()
 {
@@ -50,7 +66,7 @@ void RendererContext::Init()
 			break;
 	}
 
-	// Handoff the device context to DeviceContext class and keep a ref to both.
+	// Hand off the device context to DeviceContext class and keep a ref to both.
 	m_DeviceContext = new DeviceContext( m_pDeviceContext );
 
 	// Get Factory so we can create the swap chain.
@@ -63,18 +79,57 @@ void RendererContext::Init()
 	m_pAdapter->GetParent( __uuidof( IDXGIFactory ), ( void** )&m_pFactory );
 
 	m_pSwapChain = CreateSwapChain();
+
+	//////////////////////////////////////////////////////////////////////////
+	// TEMP
+	//////////////////////////////////////////////////////////////////////////
+
+	CreateTriangleShader();
+
+	//std::vector< Vertex > TraingleVertex;
+	//TraingleVertex.push_back( { -0.5f, -0.5f, 0.0f } );
+
+	Vertex TraingleVertex[] =
+	{
+		{ -0.5f, -0.5f, 0.0f },
+		{ 0.0f, 0.5f, 0.0f },
+		{ 0.5f, -0.5f, 0.0f }
+	};
+
+	m_pVertexBuffer = CreateVertexBuffer();
+
+	void* pShaderByteCode = nullptr;
+	uint32_t SizeShader = 0;
+	GetShaderBufferAndSize( &pShaderByteCode, &SizeShader );
+
+	m_pVertexBuffer->Load( m_pDevice, TraingleVertex, sizeof( Vertex ), ARRAYSIZE( TraingleVertex ), pShaderByteCode, SizeShader );
 }
 
 void RendererContext::Terminate()
 {
 	SAFE_RELEASE( m_pDevice );
 	SAFE_RELEASE( m_pDeviceContext );
+
+	m_pVertexBuffer->Terminate();
 }
 
 void RendererContext::Render()
 {
-	// Tell deivce context to clear RTV, RTV is the Swapchains back buffer.
-	m_DeviceContext->CleatRenderTargetColor( m_pSwapChain, 255, 0, 255, 255 );
+	// Tell device context to clear RTV, RTV is the Swapchains back buffer.
+	m_DeviceContext->ClearRenderTargetColor( m_pSwapChain, 255, 0, 255, 255 );
+
+	uint32_t w, h;
+	w = MainWindow::Get().GetWidth();
+	h = MainWindow::Get().GetHeight();
+
+	m_DeviceContext->SetViewportSize( w, h );
+
+	m_pDeviceContext->VSSetShader( m_VSShader, nullptr, 0 );
+	m_pDeviceContext->PSSetShader( m_PSShader, nullptr, 0 );
+
+	m_DeviceContext->SetVertexBuffer( m_pVertexBuffer );
+
+	m_DeviceContext->DrawTriangleList( m_pVertexBuffer->GetVertexListSize(), 0 );
 
 	// Present to swap chain.
 	m_pSwapChain->Present();
@@ -82,9 +137,32 @@ void RendererContext::Render()
 
 SwapChain* RendererContext::CreateSwapChain()
 {
-	SwapChain* pResult;
+	return new SwapChain( m_pFactory, m_pDevice );
+}
 
-	pResult = new SwapChain( m_pFactory, m_pDevice );
+VertexBuffer* RendererContext::CreateVertexBuffer()
+{
+	return new VertexBuffer();
+}
 
-	return pResult;
+
+//////////////////////////////////////////////////////////////////////////
+// TEMP - Move to shader class
+//////////////////////////////////////////////////////////////////////////
+
+void RendererContext::CreateTriangleShader()
+{
+	ID3DBlob* pErrorBlob = nullptr;
+
+	D3DCompileFromFile( L"assets/shader.hlsl", nullptr, nullptr, "VSMain", "vs_5_0", NULL, NULL, &m_pVSBlob, &pErrorBlob );
+	D3DCompileFromFile( L"assets/shader.hlsl", nullptr, nullptr, "PSMain", "ps_5_0", NULL, NULL, &m_pPSBlob, &pErrorBlob );
+
+	m_pDevice->CreateVertexShader( m_pVSBlob->GetBufferPointer(), m_pVSBlob->GetBufferSize(), nullptr, &m_VSShader );
+	m_pDevice->CreatePixelShader( m_pPSBlob->GetBufferPointer(), m_pPSBlob->GetBufferSize(), nullptr, &m_PSShader );
+}
+
+void RendererContext::GetShaderBufferAndSize( void** ppCode, uint32_t* pSize )
+{
+	*ppCode = m_pVSBlob->GetBufferPointer();
+	*pSize = m_pVSBlob->GetBufferSize();
 }

@@ -28,34 +28,37 @@
 
 #pragma once
 
-#include "Base.h"
-
 #include <d3d11.h>
 
-// I already know what a swap chain is from vulkan but in a really simple way it handles the swapping of two or more buffer, so Back Buffer and Front Buffer, the Front Buffer should always be shown on the screen/window and the back buffer gets copied into the front buffer ready for us to use again. This process repeats again and again.
+#include <Windows.h>
+#include <stdint.h>
+#include <vector>
 
 class DeviceContext;
 
-class SwapChain
+class VertexBuffer
 {
 public:
-	 SwapChain()                                                 {}
-	 SwapChain( IDXGIFactory* pFactory, ID3D11Device* pDevice )  { Init( pFactory, pDevice );      }
-	~SwapChain()                                                 { Terminate(); }
+	 VertexBuffer() {}
+	~VertexBuffer();
 
-	void Present();
+public:
 
-private:
-
-	void Init( IDXGIFactory* pFactory, ID3D11Device* pDevice );
+	void Load( ID3D11Device* pDevice, void* pListVertices, uint32_t SizeVertex, uint32_t SizeList, void* ShaderByteCode, uint32_t SizeOfShader );
 	void Terminate();
 
-	IDXGISwapChain* m_pSwapChain = nullptr;
-	// Back buffer.
-	ID3D11RenderTargetView* m_pRTV = nullptr;
+	uint32_t GetVertexListSize() { return m_SizeList; }
 
 private:
 
-	friend DeviceContext;
+	uint32_t m_SizeVertex = 0;
+	uint32_t m_SizeList = 0;
+
+	ID3D11Buffer* m_pBuffer = nullptr;
+	ID3D11InputLayout* m_pLayout = nullptr;
+
+private:
+
+	friend class DeviceContext;
 
 };

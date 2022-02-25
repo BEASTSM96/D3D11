@@ -30,6 +30,8 @@
 #include "RendererContext.h"
 #include "SwapChain.h"
 
+#include "VertexBuffer.h"
+
 DeviceContext::DeviceContext( ID3D11DeviceContext* pDeviceContext )
 {
 	m_pDeviceContext = pDeviceContext;
@@ -42,7 +44,7 @@ void DeviceContext::Terminate()
 	delete this;
 }
 
-bool DeviceContext::CleatRenderTargetColor( SwapChain* pSwapChain, float R, float G, float B, float A )
+void DeviceContext::CleatRenderTargetColor( SwapChain* pSwapChain, float R, float G, float B, float A )
 {
 	FLOAT ClearColor[ 4 ] =
 	{
@@ -54,6 +56,32 @@ bool DeviceContext::CleatRenderTargetColor( SwapChain* pSwapChain, float R, floa
 
 	// Clear back buffer
 	m_pDeviceContext->ClearRenderTargetView( pSwapChain->m_pRTV, ClearColor );
+	m_pDeviceContext->OMSetRenderTargets( 1, &pSwapChain->m_pRTV, NULL );
+}
 
-	return true;
+void DeviceContext::SetVertexBuffer( VertexBuffer* pVertexBuffer )
+{
+	// Size of vertex
+	UINT Stride = static_cast< UINT >( pVertexBuffer->m_SizeVertex );
+	UINT Offset = 0;
+
+	m_pDeviceContext->IASetVertexBuffers( 0, 1, &pVertexBuffer->m_pBuffer, &Stride, &Offset );
+
+	m_pDeviceContext->IASetInputLayout( pVertexBuffer->m_pLayout );
+}
+
+void DeviceContext::DrawTriangleList( uint32_t VertexCount, uint32_t StartVertexIndex )
+{
+	m_pDeviceContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
+
+	m_pDeviceContext->Draw( VertexCount, StartVertexIndex );
+}
+
+void DeviceContext::SetViewportSize( uint32_t Width, uint32_t Height )
+{
+	D3D11_VIEWPORT Viewport = {};
+	Viewport.Width = Width;
+	Viewport.Height = Height;
+
+	m_pDeviceContext->RSSetViewports( 1, &Viewport );
 }

@@ -37,10 +37,11 @@ class App
 	SINGLETON( App );
 
 public:
-	 App()  { Run(); }
-	~App()  {        }
+	 App()  { Run();       }
+	 ~App() { Terminate(); }
 
 	void Run();
+	void Terminate();
 
 private:
 

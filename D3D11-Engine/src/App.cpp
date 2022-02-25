@@ -41,3 +41,7 @@ void App::Run()
 	}
 
 }
+
+void App::Terminate()
+{
+}
